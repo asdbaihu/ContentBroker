@@ -28,7 +28,7 @@ public class PDFProcessorJob implements Job {
 	
 	private Logger logger = LoggerFactory.getLogger(PDFProcessorJob.class);
 	
-	@Value("${fileserver.path}")
+	@Value("${fileserver.tmp}")
 	private String fileServerPath;
 	
 	@Autowired

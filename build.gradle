@@ -23,13 +23,15 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-activemq'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    implementation 'mysql:mysql-connector-java'	
-    implementation 'org.springframework.boot:spring-boot-starter-quartz'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'joda-time:joda-time:2.10.1'
-    implementation 'org.springframework.boot:spring-boot-starter-activemq'
-    implementation 'org.apache.activemq:activemq-broker'	
+	compile 'org.springframework.boot:spring-boot-starter-activemq'
+    compile 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    compile 'mysql:mysql-connector-java'
+    compile 'org.springframework.boot:spring-boot-starter-quartz'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'joda-time:joda-time:2.10.1'
+    compile 'org.springframework.boot:spring-boot-starter-activemq'
+    compile 'org.apache.activemq:activemq-broker'
+    compile 'com.auth0:java-jwt:3.6.0'
+    compile 'com.google.code.gson:gson:2.8.4'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }

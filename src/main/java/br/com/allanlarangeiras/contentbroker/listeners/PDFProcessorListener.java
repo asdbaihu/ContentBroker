@@ -1,7 +1,8 @@
 package br.com.allanlarangeiras.contentbroker.listeners;
 
-import java.io.File;
-
+import br.com.allanlarangeiras.contentbroker.config.JmsConfig;
+import br.com.allanlarangeiras.contentbroker.model.FileEntity;
+import br.com.allanlarangeiras.contentbroker.services.PDFProcessorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,24 +10,22 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-import br.com.allanlarangeiras.contentbroker.config.JmsConfig;
-import br.com.allanlarangeiras.contentbroker.dao.FileDao;
-import br.com.allanlarangeiras.contentbroker.model.FileEntity;
+import java.io.File;
 
 @Component
 public class PDFProcessorListener {
 
 	private Logger logger = LoggerFactory.getLogger(PDFProcessorListener.class);
 
-	@Value("${fileserver.path}")
+	@Value("${fileserver.tmp}")
 	private String fileServerPath;
 	
-	private FileDao dao;
+	private PDFProcessorService pdfProcessorService;
 
 	@Autowired
-	public PDFProcessorListener(FileDao dao) {
+	public PDFProcessorListener(PDFProcessorService pdfProcessorService) {
 		super();
-		this.dao = dao;
+		this.pdfProcessorService = pdfProcessorService;
 	}
 
 	@JmsListener(destination = JmsConfig.PDF_PROCESSOR, containerFactory = "jmsFactory")
@@ -36,7 +35,7 @@ public class PDFProcessorListener {
 		if (file.exists() && file.isFile()) {
 			FileEntity fileEntity = new FileEntity(file);
 			if (fileEntity.isValid()) {
-				dao.saveFile(fileEntity);
+				pdfProcessorService.saveFile(fileEntity);
 			} else {
 				moveFileToStageDirectory(file);
 			}

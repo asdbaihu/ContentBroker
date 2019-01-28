@@ -1,5 +1,7 @@
 package br.com.allanlarangeiras.contentbroker.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,9 +14,13 @@ public class FileEntity {
 	private String name;
 	private long length;
 	private Date lasModified;
+
+	@JsonIgnore
 	private File file;
 
-	public FileEntity(File file) {
+    public FileEntity() {}
+
+    public FileEntity(File file) {
 		this.file = file;
 		try {
 			uuid = UUID.nameUUIDFromBytes(Files.readAllBytes(file.toPath())).toString();
@@ -25,7 +31,8 @@ public class FileEntity {
 		length = file.length();
 		lasModified = new Date(file.lastModified());
 	}
-	
+
+	@JsonIgnore
 	public boolean isValid() {
 		return isPdf();
 	}
@@ -70,6 +77,16 @@ public class FileEntity {
 		this.uuid = uuid;
 	}
 
+    @JsonIgnore
+    public void store(String storagePath) {
+        boolean success = this.file.renameTo(new File(storagePath + File.separator + this.getUuid() + ".pdf"));
+        if (success) {
+            this.file.delete();
+        }
+
+        throw new IllegalArgumentException("Error when storing the file");
+    }
+
 	private boolean isPdf() {
 		String[] fileNameComponents = file.getName().split("\\.");
 		if (fileNameComponents.length > 1) {
@@ -80,5 +97,5 @@ public class FileEntity {
 		}
 		return false;
 	}
-	
+
 }
