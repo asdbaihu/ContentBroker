@@ -1,8 +1,7 @@
 package br.com.allanlarangeiras.contentbroker.listeners;
 
-import br.com.allanlarangeiras.contentbroker.config.JmsConfig;
-import br.com.allanlarangeiras.contentbroker.model.FileEntity;
-import br.com.allanlarangeiras.contentbroker.services.PDFProcessorService;
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import br.com.allanlarangeiras.contentbroker.config.JmsConfig;
+import br.com.allanlarangeiras.contentbroker.model.FileEntity;
+import br.com.allanlarangeiras.contentbroker.services.PDFProcessorService;
 
 @Component
 public class PDFProcessorListener {
