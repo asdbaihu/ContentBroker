@@ -24,11 +24,9 @@ repositories {
 
 dependencies {
 	compile 'org.springframework.boot:spring-boot-starter-activemq'
-    compile 'org.springframework.boot:spring-boot-starter-data-jdbc'
-    compile 'mysql:mysql-connector-java'
+    compile 'org.springframework.boot:spring-boot-starter-data-mongodb'
     compile 'org.springframework.boot:spring-boot-starter-quartz'
     compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'joda-time:joda-time:2.10.1'
     compile 'org.springframework.boot:spring-boot-starter-activemq'
     compile 'org.apache.activemq:activemq-broker'
     compile 'com.auth0:java-jwt:3.6.0'

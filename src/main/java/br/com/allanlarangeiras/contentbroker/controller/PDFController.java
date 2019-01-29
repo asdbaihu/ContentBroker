@@ -3,10 +3,9 @@ package br.com.allanlarangeiras.contentbroker.controller;
 import br.com.allanlarangeiras.contentbroker.model.ErrorEntity;
 import br.com.allanlarangeiras.contentbroker.model.FileEntity;
 import br.com.allanlarangeiras.contentbroker.services.PDFProcessorService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by allan.larangeiras on 28/01/2019.
@@ -44,23 +45,25 @@ public class PDFController {
         return service.find(uuid);
     }
 
-    @RequestMapping(value = "/pdf/download/{uuid}", method = RequestMethod.GET)
+    @RequestMapping(value = "/pdf/download/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> downloadFile(@PathVariable String uuid) throws IOException {
-        FileEntity fileEntity = service.getFileInStorage(uuid);
-        if (fileEntity != null) {
-            Path path = Paths.get(fileEntity.getFile().getAbsolutePath());
-            ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+    public ResponseEntity<?> downloadFile(@PathVariable String id) throws IOException {
+        Optional<FileEntity> result = service.getFileInStorage(id);
+        if (result.isPresent() && result.get().getFile() != null) {
+            FileEntity fileEntity = result.get();
+            File file = fileEntity.getFile();
+            Path path = Paths.get(file.getAbsolutePath());
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
             HttpHeaders headers = new HttpHeaders();
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
             headers.add("Pragma", "no-cache");
             headers.add("Expires", "0");
             headers.add("Content-disposition", "attachment; filename="+ fileEntity.getName());
 
-
             return ResponseEntity.ok()
                     .headers(headers)
-                    .contentLength(fileEntity.getFile().length())
+                    .contentLength(file.length())
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .body(resource);
 

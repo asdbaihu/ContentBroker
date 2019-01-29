@@ -32,16 +32,18 @@ public class PDFProcessorListener {
 	public void receiveMessage(String filePath) {
 		logger.info(String.format("Processing file: %s", filePath));
 		File file = new File(filePath);
-		if (file.exists() && file.isFile()) {
-			FileEntity fileEntity = new FileEntity(file);
-			if (fileEntity.isValid()) {
-				pdfProcessorService.saveFile(fileEntity);
-			} else {
-				moveFileToStageDirectory(file);
-			}
-		} else {
-			logger.info(String.format("The path %s is not valid file", filePath));
-		}
+		if (file.isFile()) {
+            if (file.exists()) {
+                FileEntity fileEntity = new FileEntity(file);
+                if (fileEntity.isValid()) {
+                    pdfProcessorService.saveFile(fileEntity);
+                } else {
+                    moveFileToStageDirectory(file);
+                }
+            } else {
+                logger.info(String.format("The path %s is not valid file", filePath));
+            }
+        }
 	}
 
 	private void moveFileToStageDirectory(File file) {

@@ -1,43 +1,48 @@
 package br.com.allanlarangeiras.contentbroker.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Date;
-import java.util.UUID;
 
+@Document(collection = "pdf")
 public class FileEntity {
 
-	private String uuid;
+    @Id
+	private String id;
 	private String name;
 	private long length;
 	private Date lasModified;
 
 	@JsonIgnore
+    @Transient
 	private File file;
 
     public FileEntity() {}
 
     public FileEntity(File file) {
 		this.file = file;
-		try {
-			uuid = UUID.nameUUIDFromBytes(Files.readAllBytes(file.toPath())).toString();
-		} catch (IOException e) {
-			uuid = UUID.randomUUID().toString();
-		}
 		name = file.getName();
 		length = file.length();
 		lasModified = new Date(file.lastModified());
 	}
 
-	@JsonIgnore
 	public boolean isValid() {
 		return isPdf();
 	}
 
-	public File getFile() {
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public File getFile() {
 		return file;
 	}
 
@@ -69,22 +74,16 @@ public class FileEntity {
 		this.lasModified = lasModified;
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
-
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
-
     @JsonIgnore
     public void store(String storagePath) {
-        boolean success = this.file.renameTo(new File(storagePath + File.separator + this.getUuid() + ".pdf"));
+        boolean success = this.file.renameTo(new File(storagePath + File.separator + this.getId() + ".pdf"));
         if (success) {
             this.file.delete();
+        } else {
+            throw new IllegalArgumentException("Error when storing the file");
+
         }
 
-        throw new IllegalArgumentException("Error when storing the file");
     }
 
 	private boolean isPdf() {
